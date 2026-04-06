@@ -1,0 +1,12 @@
+{
+  "id": "cvt_temp_public_id",
+  "securityGroups": [],
+  "displayName": "getuserfeedback.com",
+  "brandDisplayName": "getuserfeedback.com",
+  "categories": [
+    "CONVERSIONS",
+    "ANALYTICS",
+    "SURVEY"
+  ],
+  "description": "In-app user onboarding, surveys, and embedded forms for feedback-fueled product growth"
+}
