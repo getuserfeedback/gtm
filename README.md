@@ -1,41 +1,12 @@
-# getuserfeedback GTM Template
+# getuserfeedback.com template for Google Tag Manager
 
-Google Tag Manager Community Template Gallery source for the getuserfeedback widget.
+If you want to install getuserfeedback in Google Tag Manager, use the Community Template Gallery inside GTM.
 
-This repository publishes the root gallery artifact:
-- `template.tpl`
-- `metadata.yaml`
+In GTM:
 
-The template itself is generated from the published `@getuserfeedback/adapters` package.
+1. Open **Templates**.
+2. Open the **Tag Templates** gallery.
+3. Search for `getuserfeedback`.
+4. Add the template and configure it there.
 
-## What the template supports
-
-- Current getuserfeedback loader script and init contract
-- GTM Consent Mode integration
-- Automatic and manual consent mapping
-- Analytics measurement policy controls
-- Public identify support with:
-  - intelligent mode
-  - disabled mode
-  - advanced mode
-- Theme configuration for fixed, system, host-matched, and GTM-variable-driven setups
-
-## Known limitation
-
-Explicit public navigation/router updates are not yet exposed by this template.
-
-## Local checks
-
-Use Bun in this repo.
-
-```bash
-bun run generate:template
-bun test --dots
-```
-
-## Publishing
-
-For Community Template Gallery publication, the repository root contains the files Google expects:
-- `template.tpl`
-- `metadata.yaml`
-- `LICENSE`
+This repository exists to publish the gallery template source. Most users should not need anything here.
