@@ -6,6 +6,6 @@
     "generate:template": "bun run scripts/generate-template.ts"
   },
   "dependencies": {
-    "@getuserfeedback/adapters": "^0.4.5"
+    "@getuserfeedback/adapters": "0.5.1"
   }
 }

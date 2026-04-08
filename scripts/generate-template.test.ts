@@ -3,8 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 const templatePath = path.resolve("template.tpl");
-const templateSourceDirPath = path.resolve("template-source");
-const infoOverridesPath = path.join(templateSourceDirPath, "info-overrides.json");
+const brandThumbnailPath = path.resolve("template-source", "brand-thumbnail.txt");
 
 const extractSection = (
   source: string,
@@ -47,19 +46,21 @@ test("generated template preserves UTF-8 BOM", () => {
 });
 
 test("generated template preserves source info overrides and gallery metadata", () => {
-  const sourceInfo = JSON.parse(readFileSync(infoOverridesPath, "utf8")) as Record<string, unknown>;
   const generatedInfo = parseInfo(templatePath);
+  const brandThumbnail = readFileSync(brandThumbnailPath, "utf8").trim();
 
-  expect(generatedInfo.id).toBe(sourceInfo.id);
-  expect(generatedInfo.displayName).toBe(sourceInfo.displayName);
-  expect(generatedInfo.description).toBe(sourceInfo.description);
-  expect(generatedInfo.categories).toEqual(sourceInfo.categories);
-  expect(generatedInfo.securityGroups).toEqual(sourceInfo.securityGroups);
-  expect(generatedInfo.brand?.displayName).toBe(sourceInfo.brandDisplayName);
+  expect(generatedInfo.id).toBe("cvt_temp_public_id");
+  expect(generatedInfo.displayName).toBe("getuserfeedback.com");
+  expect(generatedInfo.description).toBe(
+    "In-app user onboarding, surveys, and embedded forms for feedback-fueled product growth",
+  );
+  expect(generatedInfo.categories).toEqual(["CONVERSIONS", "ANALYTICS", "SURVEY"]);
+  expect(generatedInfo.securityGroups).toEqual([]);
+  expect(generatedInfo.brand?.displayName).toBe("getuserfeedback.com");
   expect(generatedInfo.type).toBe("TAG");
   expect(generatedInfo.version).toBe(1);
   expect(generatedInfo.containerContexts).toEqual(["WEB"]);
-  expect(generatedInfo.brand?.thumbnail).toContain("data:image/png;base64,");
+  expect(generatedInfo.brand?.thumbnail).toBe(brandThumbnail);
 });
 
 test("generated template keeps a valid empty tests manifest", () => {

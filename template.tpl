@@ -36,7 +36,7 @@ ___TEMPLATE_PARAMETERS___
     "name": "apiKey",
     "displayName": "API Key",
     "simpleValueType": true,
-    "help": "Find your API key in getuserfeedback.com under Settings → Widget.",
+    "help": "Paste your getuserfeedback API key from Settings → Widget.",
     "valueValidators": [
       {
         "type": "NON_EMPTY"
@@ -46,13 +46,13 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "GROUP",
     "name": "themeGroup",
-    "displayName": "Theme Settings",
+    "displayName": "Color Scheme",
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
         "type": "SELECT",
         "name": "themeMode",
-        "displayName": "Theme Mode",
+        "displayName": "Color Scheme",
         "macrosInSelect": false,
         "selectItems": [
           {
@@ -78,16 +78,16 @@ ___TEMPLATE_PARAMETERS___
         ],
         "simpleValueType": true,
         "defaultValue": "host",
-        "help": "Choose how the widget theme is set: use a fixed mode, follow your site's theme attributes, or read the value from a GTM variable."
+        "help": "Choose how the widget color scheme should work."
       },
       {
         "type": "SELECT",
         "name": "themeModeVariable",
-        "displayName": "Theme Mode Variable",
+        "displayName": "Color Scheme Variable",
         "macrosInSelect": true,
         "selectItems": [],
         "simpleValueType": true,
-        "help": "Use a GTM variable that resolves to `light`, `dark`, `system`, `auto`, or a comma-separated list of attribute names.",
+        "help": "Choose a GTM variable that returns `light`, `dark`, `system`, `auto`, or a comma-separated list of attribute names.",
         "enablingConditions": [
           {
             "paramName": "themeMode",
@@ -104,189 +104,15 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "themeAttr",
-        "displayName": "Host Theme Attributes",
+        "displayName": "Site Color Scheme Attributes",
         "simpleValueType": true,
         "defaultValue": "class,data-theme",
-        "help": "Comma-separated attributes to inspect on `<html>` or `<body>` when matching the widget theme to your site.",
+        "help": "Add the HTML or body attributes that show your site's color scheme, separated by commas.",
         "enablingConditions": [
           {
             "paramName": "themeMode",
             "paramValue": "host",
             "type": "EQUALS"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "GROUP",
-    "name": "consentGroup",
-    "displayName": "Consent Settings",
-    "groupStyle": "ZIPPY_CLOSED",
-    "subParams": [
-      {
-        "type": "RADIO",
-        "name": "consentMode",
-        "displayName": "Consent Mode",
-        "radioItems": [
-          {
-            "value": "automatic",
-            "displayValue": "Automatic (Use GTM Consent Mode)",
-            "help": "Use GTM consent checks to set the widget's initial consent state. This also lets you decide whether analytics measurement should follow analytics storage or use its own fixed setting."
-          },
-          {
-            "value": "manual",
-            "displayValue": "Manual (Map Public Scopes)",
-            "help": "Choose which widget consent settings are granted for each GTM consent type. Required widget storage settings stay enabled and are not configurable here."
-          }
-        ],
-        "simpleValueType": true,
-        "defaultValue": "automatic"
-      },
-      {
-        "type": "SELECT",
-        "name": "analyticsMeasurementMode",
-        "displayName": "Analytics Measurement Policy",
-        "macrosInSelect": false,
-        "selectItems": [
-          {
-            "value": "inherit-analytics-storage",
-            "displayValue": "Inherit analytics_storage"
-          },
-          {
-            "value": "granted",
-            "displayValue": "Always granted"
-          },
-          {
-            "value": "denied",
-            "displayValue": "Always denied"
-          }
-        ],
-        "simpleValueType": true,
-        "defaultValue": "inherit-analytics-storage",
-        "help": "Analytics measurement is separate from analytics storage so you can control event measurement independently.\nInherit analytics_storage: `analytics.measurement` matches GTM `analytics_storage`.\nAlways granted: `analytics.measurement` is always enabled.\nAlways denied: `analytics.measurement` is always disabled.",
-        "enablingConditions": [
-          {
-            "paramName": "consentMode",
-            "paramValue": "automatic",
-            "type": "EQUALS"
-          }
-        ]
-      },
-      {
-        "type": "SIMPLE_TABLE",
-        "name": "scopeMappings",
-        "displayName": "Scope Mappings",
-        "simpleTableColumns": [
-          {
-            "defaultValue": "analytics.storage",
-            "displayName": "Widget Scope",
-            "name": "scope",
-            "type": "SELECT",
-            "isUnique": true,
-            "selectItems": [
-              {
-                "value": "analytics.storage",
-                "displayValue": "Analytics Storage"
-              },
-              {
-                "value": "analytics.measurement",
-                "displayValue": "Analytics Measurement"
-              },
-              {
-                "value": "personalization.storage",
-                "displayValue": "Personalization Storage"
-              },
-              {
-                "value": "ads.storage",
-                "displayValue": "Ads Storage"
-              },
-              {
-                "value": "ads.user_data",
-                "displayValue": "Ads User Data"
-              },
-              {
-                "value": "ads.personalization",
-                "displayValue": "Ads Personalization"
-              }
-            ]
-          },
-          {
-            "defaultValue": "analytics_storage",
-            "displayName": "Granted When",
-            "name": "mapping",
-            "type": "SELECT",
-            "macrosInSelect": true,
-            "selectItems": [
-              {
-                "value": "functionality_storage",
-                "displayValue": "Functionality Storage Granted"
-              },
-              {
-                "value": "security_storage",
-                "displayValue": "Security Storage Granted"
-              },
-              {
-                "value": "analytics_storage",
-                "displayValue": "Analytics Storage Granted"
-              },
-              {
-                "value": "personalization_storage",
-                "displayValue": "Personalization Storage Granted"
-              },
-              {
-                "value": "ad_storage",
-                "displayValue": "Ad Storage Granted"
-              },
-              {
-                "value": "ad_user_data",
-                "displayValue": "Ad User Data Granted"
-              },
-              {
-                "value": "ad_personalization",
-                "displayValue": "Ad Personalization Granted"
-              }
-            ]
-          }
-        ],
-        "newRowButtonText": "Add Scope",
-        "help": "Some required widget storage settings are always enabled and do not appear here.\nfunctionality.storage and security.storage are always enabled so the widget can load and keep itself secure.\n\nAnalytics Storage: Allow storage for analytics identifiers enabling consistent cross-session measurement.\nAnalytics Measurement: Allow sending analytics events; can operate without storage when needed.\nPersonalization Storage: Allow storage used to personalize the widget UI/targeting (non-ads).\nAds Storage: Allow storage for advertising identifiers and conversion cookies.\nAds User Data: Allow sending user data to ad platforms when legally permitted.\nAds Personalization: Allow personalized advertising signals and interest-based targeting.",
-        "enablingConditions": [
-          {
-            "paramName": "consentMode",
-            "paramValue": "manual",
-            "type": "EQUALS"
-          }
-        ],
-        "valueValidators": [
-          {
-            "type": "NON_EMPTY"
-          }
-        ],
-        "defaultValue": [
-          {
-            "scope": "analytics.storage",
-            "mapping": "analytics_storage"
-          },
-          {
-            "scope": "personalization.storage",
-            "mapping": "personalization_storage"
-          },
-          {
-            "scope": "ads.storage",
-            "mapping": "ad_storage"
-          },
-          {
-            "scope": "ads.user_data",
-            "mapping": "ad_user_data"
-          },
-          {
-            "scope": "ads.personalization",
-            "mapping": "ad_personalization"
-          },
-          {
-            "scope": "analytics.measurement",
-            "mapping": "analytics_storage"
           }
         ]
       }
@@ -308,24 +134,24 @@ ___TEMPLATE_PARAMETERS___
           {
             "value": "intelligent",
             "displayValue": "Intelligent",
-            "help": "Automatically read common data layer keys for user ID, email, and phone. User ID is sent as `identify(userId)` and email or phone stay as raw traits."
+            "help": "Automatically read common data layer keys for user ID, email, phone, first name, and last name."
           },
           {
             "value": "disabled",
             "displayValue": "Disabled",
-            "help": "Do not send identify data from this GTM tag."
+            "help": "Don't send identity data from this tag."
           },
           {
             "value": "advanced",
-            "displayValue": "Advanced",
-            "help": "Choose how GTM encodes the primary identity and add any extra traits you want to send from GTM variables."
+            "displayValue": "Custom",
+            "help": "Choose the main identity value and add any extra fields you want to send."
           }
         ]
       },
       {
         "type": "SELECT",
         "name": "identifyPrimaryIdentityType",
-        "displayName": "Primary identity",
+        "displayName": "Main identity",
         "simpleValueType": true,
         "macrosInSelect": false,
         "defaultValue": "userId",
@@ -343,7 +169,7 @@ ___TEMPLATE_PARAMETERS___
             "value": "email"
           }
         ],
-        "help": "Choose whether GTM should encode the primary identity as `identify(userId)` or as a raw identity trait like `email` or `phone`.",
+        "help": "Choose whether the main identity should be sent as a user ID, email, or phone number.",
         "enablingConditions": [
           {
             "paramName": "identifyMode",
@@ -355,9 +181,9 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "TEXT",
         "name": "identifyPrimaryIdentityValue",
-        "displayName": "Primary identity value",
+        "displayName": "Main identity value",
         "simpleValueType": true,
-        "help": "Use a GTM variable that resolves to the selected primary identity value.",
+        "help": "Choose a GTM variable for the main identity value.",
         "enablingConditions": [
           {
             "paramName": "identifyMode",
@@ -370,7 +196,7 @@ ___TEMPLATE_PARAMETERS___
         "type": "SIMPLE_TABLE",
         "name": "identifyTraits",
         "displayName": "Traits",
-        "help": "Add any traits you want to send from GTM variables. Common examples are `email`, `phone`, `name`, and `plan`. Empty rows are ignored.",
+        "help": "Add any extra fields you want to send from GTM variables. Common examples are `email`, `phone`, `firstName`, `lastName`, and `plan`. Empty rows are ignored.",
         "newRowButtonText": "Add Trait",
         "simpleTableColumns": [
           {
@@ -408,14 +234,128 @@ const copyFromDataLayer = require("copyFromDataLayer");
 
 const loaderScriptBaseUrl = "https://cdn.getuserfeedback.com/widget/loader/v1";
 const gtmConsentTypes = ["functionality_storage","security_storage","analytics_storage","personalization_storage","ad_storage","ad_user_data","ad_personalization"];
-const automaticDefaultScopeMappings = [{"scope":"analytics.storage","mapping":"analytics_storage"},{"scope":"personalization.storage","mapping":"personalization_storage"},{"scope":"ads.storage","mapping":"ad_storage"},{"scope":"ads.user_data","mapping":"ad_user_data"},{"scope":"ads.personalization","mapping":"ad_personalization"}];
-const defaultScopeMappings = [{"scope":"analytics.storage","mapping":"analytics_storage"},{"scope":"personalization.storage","mapping":"personalization_storage"},{"scope":"ads.storage","mapping":"ad_storage"},{"scope":"ads.user_data","mapping":"ad_user_data"},{"scope":"ads.personalization","mapping":"ad_personalization"},{"scope":"analytics.measurement","mapping":"analytics_storage"}];
-const hostConfigurableScopes = ["analytics.storage","personalization.storage","ads.storage","ads.user_data","ads.personalization","analytics.measurement"];
 const defaultAutoDetectColorSchemeAttrs = ["class","data-theme"];
 const queueKey = "__getuserfeedback_queue";
 const intelligentIdentifyUserIdKeys = ["userId","user.userId","user.id","traits.userId","traits.id","context.userId","context.user.id"];
 const intelligentIdentifyEmailKeys = ["email","user.email","traits.email","context.email","context.user.email"];
+const intelligentIdentifyFirstNameKeys = ["firstName","first_name","user.firstName","user.first_name","user.givenName","user.given_name","traits.firstName","traits.first_name","traits.givenName","traits.given_name","context.firstName","context.first_name","context.user.firstName","context.user.first_name","context.user.givenName","context.user.given_name"];
+const intelligentIdentifyLastNameKeys = ["lastName","last_name","user.lastName","user.last_name","user.familyName","user.family_name","traits.lastName","traits.last_name","traits.familyName","traits.family_name","context.lastName","context.last_name","context.user.lastName","context.user.last_name","context.user.familyName","context.user.family_name"];
 const intelligentIdentifyPhoneKeys = ["phone","user.phone","traits.phone","context.phone","context.user.phone"];
+const generatedRuntimeEndpoints = null;
+const queueClientMeta = {"loader":"gtm","transport":"tag-manager"};
+function resolveGtmThemeInputFromTemplateData(templateData) {
+	if (templateData.themeMode === "variable") {
+		return templateData.themeModeVariable;
+	}
+	if (templateData.themeMode === "host") {
+		return templateData.themeAttr;
+	}
+	return templateData.themeMode === "light" ||
+		templateData.themeMode === "dark" ||
+		templateData.themeMode === "system"
+		? templateData.themeMode
+		: undefined;
+}
+function buildGtmIdentifyCommand(input) {
+	function normalizeTraitValue(value) {
+		if (value === undefined || value === null) {
+			return undefined;
+		}
+		if (typeof value !== "string") {
+			return value;
+		}
+		const trimmedValue = value.trim();
+		return trimmedValue.length > 0 ? trimmedValue : undefined;
+	}
+
+	function normalizeUserIdValue(value) {
+		if (typeof value !== "string") {
+			return undefined;
+		}
+		const trimmedValue = value.trim();
+		return trimmedValue.length > 0 ? trimmedValue : undefined;
+	}
+
+	function addTrait(traits, name, value) {
+		const traitName = name.trim();
+		const traitValue = normalizeTraitValue(value);
+		if (traitName.length === 0 || traitValue === undefined) {
+			return;
+		}
+		traits[traitName] = traitValue;
+	}
+
+	function hasOwnKeys(value) {
+		for (const key in value) {
+			return key.length > 0;
+		}
+		return false;
+	}
+
+	function buildFromUserIdAndTraits(userId, traits) {
+		const hasTraits = hasOwnKeys(traits);
+		if (userId && hasTraits) {
+			return {
+				kind: "identify",
+				userId: userId,
+				traits: traits,
+			};
+		}
+		if (userId) {
+			return {
+				kind: "identify",
+				userId: userId,
+			};
+		}
+		if (hasTraits) {
+			return {
+				kind: "identify",
+				traits: traits,
+			};
+		}
+		return undefined;
+	}
+
+	if (input.mode === "disabled") {
+		return undefined;
+	}
+
+	if (input.mode === "intelligent") {
+		const traits = {};
+		addTrait(traits, "email", input.email);
+		addTrait(traits, "firstName", input.firstName);
+		addTrait(traits, "lastName", input.lastName);
+		addTrait(traits, "phone", input.phone);
+		return buildFromUserIdAndTraits(normalizeUserIdValue(input.userId), traits);
+	}
+
+	const traits = {};
+	if (input.traits && typeof input.traits === "object") {
+		for (const key in input.traits) {
+			traits[key] = input.traits[key];
+		}
+	}
+	if (input.primaryIdentityType === "userId") {
+		return buildFromUserIdAndTraits(
+			normalizeUserIdValue(input.primaryIdentityValue),
+			traits,
+		);
+	}
+
+	if (
+		input.primaryIdentityType === "email" ||
+		input.primaryIdentityType === "phone"
+	) {
+		addTrait(traits, input.primaryIdentityType, input.primaryIdentityValue);
+	}
+
+	return hasOwnKeys(traits)
+		? {
+				kind: "identify",
+				traits: traits,
+			}
+		: undefined;
+}
 
 const trimString = function(value) {
 	return typeof value === "string" ? value.trim() : "";
@@ -500,12 +440,7 @@ const normalizeTraitValue = function(value) {
 };
 
 const normalizeUserIdValue = function(value) {
-	if (typeof value !== "string") {
-		return undefined;
-	}
-
-	const trimmedValue = value.trim();
-	return trimmedValue ? trimmedValue : undefined;
+	return typeof value === "string" ? trimString(value) || undefined : undefined;
 };
 
 const addTrait = function(result, name, value) {
@@ -535,10 +470,12 @@ const getIntelligentIdentifyValue = function(keys) {
 };
 
 const getIntelligentIdentifyTraits = function() {
-	const traits = {};
-	addTrait(traits, "email", getIntelligentIdentifyValue(intelligentIdentifyEmailKeys));
-	addTrait(traits, "phone", getIntelligentIdentifyValue(intelligentIdentifyPhoneKeys));
-	return traits;
+	return {
+		email: getIntelligentIdentifyValue(intelligentIdentifyEmailKeys),
+		firstName: getIntelligentIdentifyValue(intelligentIdentifyFirstNameKeys),
+		lastName: getIntelligentIdentifyValue(intelligentIdentifyLastNameKeys),
+		phone: getIntelligentIdentifyValue(intelligentIdentifyPhoneKeys),
+	};
 };
 
 const getAdvancedIdentifyTraits = function(templateData) {
@@ -554,96 +491,27 @@ const getAdvancedIdentifyTraits = function(templateData) {
 	return traits;
 };
 
-const hasOwnKeys = function(value) {
-	for (const key in value) {
-		return !!key;
-	}
-	return false;
-};
-
-const getIdentifyCommandFromUserIdAndTraits = function(userId, traits) {
-	const hasTraits = hasOwnKeys(traits);
-
-	if (userId && hasTraits) {
-		return {
-			kind: "identify",
-			userId: userId,
-			traits: traits,
-		};
-	}
-	if (userId) {
-		return {
-			kind: "identify",
-			userId: userId,
-		};
-	}
-	if (hasTraits) {
-		return {
-			kind: "identify",
-			traits: traits,
-		};
-	}
-	return undefined;
-};
-
-const getIntelligentIdentifyCommand = function() {
-	const userId = normalizeUserIdValue(
-		getIntelligentIdentifyValue(intelligentIdentifyUserIdKeys),
-	);
-	const traits = getIntelligentIdentifyTraits();
-	return getIdentifyCommandFromUserIdAndTraits(userId, traits);
-};
-
-const getAdvancedIdentifyCommand = function(templateData) {
-	const traits = getAdvancedIdentifyTraits(templateData);
-	const primaryIdentityType = trimString(templateData.identifyPrimaryIdentityType);
-	const primaryIdentityValue = normalizeTraitValue(
-		templateData.identifyPrimaryIdentityValue,
-	);
-
-	if (primaryIdentityType === "userId") {
-		const userId = normalizeUserIdValue(primaryIdentityValue);
-		return getIdentifyCommandFromUserIdAndTraits(userId, traits);
-	}
-
-	if (
-		primaryIdentityType === "email" ||
-		primaryIdentityType === "phone"
-	) {
-		addTrait(traits, primaryIdentityType, primaryIdentityValue);
-	}
-
-	return hasOwnKeys(traits)
-		? {
-				kind: "identify",
-				traits: traits,
-			}
-		: undefined;
-};
-
 const getIdentifyCommand = function(templateData) {
 	if (templateData.identifyMode === "intelligent") {
-		return getIntelligentIdentifyCommand();
+		const intelligentTraits = getIntelligentIdentifyTraits();
+		return buildGtmIdentifyCommand({
+			email: intelligentTraits.email,
+			firstName: intelligentTraits.firstName,
+			lastName: intelligentTraits.lastName,
+			mode: "intelligent",
+			phone: intelligentTraits.phone,
+			userId: getIntelligentIdentifyValue(intelligentIdentifyUserIdKeys),
+		});
 	}
 	if (templateData.identifyMode === "advanced") {
-		return getAdvancedIdentifyCommand(templateData);
-	}
-	return undefined;
-};
-
-const getThemeInput = function(templateData) {
-	if (templateData.themeMode === "variable") {
-		return templateData.themeModeVariable;
-	}
-	if (templateData.themeMode === "host") {
-		return templateData.themeAttr;
-	}
-	if (
-		templateData.themeMode === "light" ||
-		templateData.themeMode === "dark" ||
-		templateData.themeMode === "system"
-	) {
-		return templateData.themeMode;
+		return buildGtmIdentifyCommand({
+			mode: "advanced",
+			primaryIdentityType: trimString(templateData.identifyPrimaryIdentityType),
+			primaryIdentityValue: normalizeTraitValue(
+				templateData.identifyPrimaryIdentityValue,
+			),
+			traits: getAdvancedIdentifyTraits(templateData),
+		});
 	}
 	return undefined;
 };
@@ -659,144 +527,78 @@ const getConsentState = function() {
 	return result;
 };
 
-const dedupeScopes = function(scopes) {
-	const seen = {};
-	const result = [];
-	for (let index = 0; index < scopes.length; index += 1) {
-		const scope = scopes[index];
-		if (typeof scope !== "string" || seen[scope]) {
-			continue;
-		}
-		seen[scope] = true;
-		result.push(scope);
-	}
-	return result;
-};
-
-const isKnownConsentType = function(consentType) {
-	for (let index = 0; index < gtmConsentTypes.length; index += 1) {
-		if (gtmConsentTypes[index] === consentType) {
-			return true;
-		}
-	}
-	return false;
-};
-
-const isHostConfigurableScope = function(scope) {
-	for (let index = 0; index < hostConfigurableScopes.length; index += 1) {
-		if (hostConfigurableScopes[index] === scope) {
-			return true;
-		}
-	}
-	return false;
-};
-
-const getManualScopeMappings = function(templateData) {
-	const rawRows = getSimpleTableRows(templateData.scopeMappings);
-	const rows = rawRows.length > 0 ? rawRows : defaultScopeMappings;
-	const mappings = [];
-	for (let index = 0; index < rows.length; index += 1) {
-		const row = rows[index];
-		if (!row || typeof row !== "object") {
-			continue;
-		}
-		const scope = trimString(row.scope);
-		const consentType = trimString(row.mapping);
-		if (!scope || !consentType) {
-			continue;
-		}
-		if (!isHostConfigurableScope(scope) || !isKnownConsentType(consentType)) {
-			continue;
-		}
-		mappings.push({
-			scope: scope,
-			consentType: consentType,
-		});
-	}
-	return mappings;
-};
-
-const getAnalyticsMeasurementMode = function(templateData) {
-	if (
-		templateData.analyticsMeasurementMode === "granted" ||
-		templateData.analyticsMeasurementMode === "denied"
-	) {
-		return templateData.analyticsMeasurementMode;
-	}
-	return "inherit-analytics-storage";
-};
-
 const buildDefaultConsent = function(templateData) {
 	const consentState = getConsentState();
+	const grantedScopeLookup = {};
 	const grantedScopes = [];
+	const grantScope = function(scope) {
+		if (!scope || grantedScopeLookup[scope]) {
+			return;
+		}
+		grantedScopeLookup[scope] = true;
+		grantedScopes.push(scope);
+	};
 
-	if (templateData.consentMode === "manual") {
-		const scopeMappings = getManualScopeMappings(templateData);
-		for (let index = 0; index < scopeMappings.length; index += 1) {
-			const mapping = scopeMappings[index];
-			if (consentState[mapping.consentType] === "granted") {
-				grantedScopes.push(mapping.scope);
-			}
-		}
-	} else {
-		for (let index = 0; index < automaticDefaultScopeMappings.length; index += 1) {
-			const mapping = automaticDefaultScopeMappings[index];
-			if (consentState[mapping.mapping] === "granted") {
-				grantedScopes.push(mapping.scope);
-			}
-		}
-
-		const analyticsMeasurementMode = getAnalyticsMeasurementMode(templateData);
-		if (analyticsMeasurementMode === "granted") {
-			grantedScopes.push("analytics.measurement");
-		}
-		if (
-			analyticsMeasurementMode === "inherit-analytics-storage" &&
-			consentState.analytics_storage === "granted"
-		) {
-			grantedScopes.push("analytics.measurement");
-		}
+	if (consentState.analytics_storage === "granted") {
+		grantScope("analytics.storage");
+		grantScope("analytics.measurement");
+	}
+	if (consentState.personalization_storage === "granted") {
+		grantScope("personalization.storage");
+	}
+	if (consentState.ad_storage === "granted") {
+		grantScope("ads.storage");
+	}
+	if (consentState.ad_user_data === "granted") {
+		grantScope("ads.user_data");
+	}
+	if (consentState.ad_personalization === "granted") {
+		grantScope("ads.personalization");
 	}
 
-	const dedupedScopes = dedupeScopes(grantedScopes);
-	return dedupedScopes.length > 0 ? dedupedScopes : undefined;
+	return grantedScopes.length > 0 ? grantedScopes : undefined;
 };
 
-const onSuccess = function() {
-	if (typeof data.gtmOnSuccess === "function") {
-		data.gtmOnSuccess();
-	}
-};
+let requestSequence = 0;
 
-const onFailure = function() {
-	if (typeof data.gtmOnFailure === "function") {
-		data.gtmOnFailure();
-	}
+const enqueuePublicCommand = function(queuePush, instanceId, command) {
+	requestSequence += 1;
+	const requestId = "gtm_" + command.kind + "_" + requestSequence;
+	queuePush({
+		version: "1",
+		instanceId: instanceId,
+		requestId: requestId,
+		idempotencyKey: requestId,
+		clientMeta: queueClientMeta,
+		command: command,
+	});
 };
 
 const apiKey = trimString(data.apiKey);
 if (!apiKey) {
-	onFailure();
+	if (typeof data.gtmOnFailure === "function") {
+		data.gtmOnFailure();
+	}
 	return;
 }
 
 const encodedApiKey = encodeUriComponent(apiKey);
 if (!encodedApiKey) {
-	onFailure();
+	if (typeof data.gtmOnFailure === "function") {
+		data.gtmOnFailure();
+	}
 	return;
 }
-
 const widgetUrl = loaderScriptBaseUrl + "/" + encodedApiKey + "/loader.js";
 const queuePush = createQueue(queueKey);
+const instanceId = "gtm-" + encodedApiKey;
 const initOptions = {
 	apiKey: apiKey,
-	clientMeta: {
-		loader: "gtm",
-		transport: "tag-manager",
-	},
+	clientMeta: queueClientMeta,
 };
 
-const colorScheme = normalizeThemeInput(getThemeInput(data));
+const themeInput = resolveGtmThemeInputFromTemplateData(data);
+const colorScheme = normalizeThemeInput(themeInput);
 if (colorScheme !== undefined) {
 	initOptions.colorScheme = colorScheme;
 }
@@ -806,22 +608,36 @@ if (defaultConsent !== undefined) {
 	initOptions.defaultConsent = defaultConsent;
 }
 
-queuePush({
+if (generatedRuntimeEndpoints !== null) {
+	initOptions.runtimeEndpoints = {
+		apiUrl: generatedRuntimeEndpoints.apiUrl,
+		coreUrl: generatedRuntimeEndpoints.coreUrl,
+	};
+}
+
+enqueuePublicCommand(queuePush, instanceId, {
 	kind: "init",
 	opts: initOptions,
 });
 
 const identifyCommand = getIdentifyCommand(data);
 if (identifyCommand !== undefined) {
-	queuePush(identifyCommand);
+	enqueuePublicCommand(queuePush, instanceId, identifyCommand);
 }
 
 log("Loading getuserfeedback loader:", widgetUrl);
 
 if (queryPermission("inject_script", widgetUrl)) {
-	injectScript(widgetUrl, onSuccess, onFailure, "getuserfeedback");
+	injectScript(
+		widgetUrl,
+		typeof data.gtmOnSuccess === "function" ? data.gtmOnSuccess : undefined,
+		typeof data.gtmOnFailure === "function" ? data.gtmOnFailure : undefined,
+		"getuserfeedback",
+	);
 } else {
-	onFailure();
+	if (typeof data.gtmOnFailure === "function") {
+		data.gtmOnFailure();
+	}
 }
 
 ___WEB_PERMISSIONS___
@@ -1233,6 +1049,134 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "context.user.email"
+              },
+              {
+                "type": 1,
+                "string": "firstName"
+              },
+              {
+                "type": 1,
+                "string": "first_name"
+              },
+              {
+                "type": 1,
+                "string": "user.firstName"
+              },
+              {
+                "type": 1,
+                "string": "user.first_name"
+              },
+              {
+                "type": 1,
+                "string": "user.givenName"
+              },
+              {
+                "type": 1,
+                "string": "user.given_name"
+              },
+              {
+                "type": 1,
+                "string": "traits.firstName"
+              },
+              {
+                "type": 1,
+                "string": "traits.first_name"
+              },
+              {
+                "type": 1,
+                "string": "traits.givenName"
+              },
+              {
+                "type": 1,
+                "string": "traits.given_name"
+              },
+              {
+                "type": 1,
+                "string": "context.firstName"
+              },
+              {
+                "type": 1,
+                "string": "context.first_name"
+              },
+              {
+                "type": 1,
+                "string": "context.user.firstName"
+              },
+              {
+                "type": 1,
+                "string": "context.user.first_name"
+              },
+              {
+                "type": 1,
+                "string": "context.user.givenName"
+              },
+              {
+                "type": 1,
+                "string": "context.user.given_name"
+              },
+              {
+                "type": 1,
+                "string": "lastName"
+              },
+              {
+                "type": 1,
+                "string": "last_name"
+              },
+              {
+                "type": 1,
+                "string": "user.lastName"
+              },
+              {
+                "type": 1,
+                "string": "user.last_name"
+              },
+              {
+                "type": 1,
+                "string": "user.familyName"
+              },
+              {
+                "type": 1,
+                "string": "user.family_name"
+              },
+              {
+                "type": 1,
+                "string": "traits.lastName"
+              },
+              {
+                "type": 1,
+                "string": "traits.last_name"
+              },
+              {
+                "type": 1,
+                "string": "traits.familyName"
+              },
+              {
+                "type": 1,
+                "string": "traits.family_name"
+              },
+              {
+                "type": 1,
+                "string": "context.lastName"
+              },
+              {
+                "type": 1,
+                "string": "context.last_name"
+              },
+              {
+                "type": 1,
+                "string": "context.user.lastName"
+              },
+              {
+                "type": 1,
+                "string": "context.user.last_name"
+              },
+              {
+                "type": 1,
+                "string": "context.user.familyName"
+              },
+              {
+                "type": 1,
+                "string": "context.user.family_name"
               },
               {
                 "type": 1,
@@ -1861,7 +1805,5 @@ scenarios:
 
 ___NOTES___
 
-Generated on 6/4/2026, 20:35:21 from @getuserfeedback/adapters ^0.4.5.
-Local repo-owned sections are generated from template-source files: terms of service, public template id, security groups, gallery copy, categories, and brand thumbnail.
-Embedded GTM tests are maintained in template-tests.yaml.
+Generated from @getuserfeedback/adapters/gtm.
 
