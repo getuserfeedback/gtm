@@ -1399,7 +1399,7 @@ scenarios:
 
     assertThat(queuedCommands[0].command.opts.defaultConsent).contains('analytics.storage', 'analytics.measurement');
 
-- name: Automatic consent can force analytics measurement granted
+- name: Automatic consent omits default consent when no GTM consent is granted
   code: |-
     let queuedCommands = [];
 
@@ -1435,7 +1435,7 @@ scenarios:
 
     assertThat(queuedCommands[0].command.opts.defaultConsent).isEqualTo(undefined);
 
-- name: Automatic consent can force analytics measurement denied
+- name: Automatic consent includes analytics measurement when analytics storage is granted
   code: |-
     let queuedCommands = [];
 
