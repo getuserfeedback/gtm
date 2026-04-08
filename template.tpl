@@ -1362,7 +1362,7 @@ scenarios:
 
     assertThat(queuedCommands[0].command.opts.colorScheme).isEqualTo('system');
 
-- name: Automatic consent includes analytics measurement when analytics storage is granted
+- name: Automatic consent emits only analytics scopes when analytics storage is granted
   code: |-
     let queuedCommands = [];
 

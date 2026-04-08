@@ -69,7 +69,11 @@ test("generated template keeps a valid empty tests manifest", () => {
   expect(testsSection.includes("scenarios:")).toBe(true);
   expect(testsSection.includes("Loader URL uses encoded API key")).toBe(true);
   expect(testsSection.includes("Fixed dark theme sets init colorScheme")).toBe(true);
-  expect(testsSection.includes("Automatic consent can force analytics measurement denied")).toBe(true);
+  expect(
+    testsSection.includes(
+      "Automatic consent emits only analytics scopes when analytics storage is granted",
+    ),
+  ).toBe(true);
   expect(testsSection.includes("Intelligent identity reads common data layer signals")).toBe(true);
   expect(testsSection.includes("Intelligent identity skips data layer when permission is denied")).toBe(true);
   expect(testsSection.includes("Advanced identity can encode email as the primary identity")).toBe(true);
