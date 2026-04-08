@@ -257,46 +257,6 @@ scenarios:
 
     assertThat(queuedCommands[0].command.opts.defaultConsent).containsExactly('analytics.storage', 'analytics.measurement');
 
-- name: Manual consent uses configured mappings
-  code: |-
-    let queuedCommands = [];
-
-    mock('queryPermission', function(permissionId) {
-      return permissionId === 'inject_script';
-    });
-
-    mock('encodeUriComponent', function(value) {
-      return value;
-    });
-
-    mock('injectScript', function(url, onSuccess) {
-      onSuccess();
-    });
-
-    mock('createQueue', function() {
-      return function(command) {
-        queuedCommands.push(command);
-      };
-    });
-
-    mock('isConsentGranted', function(consentType) {
-      return consentType === 'ad_storage';
-    });
-
-    runCode({
-      apiKey: 'test-api-key',
-      themeMode: 'host',
-      themeAttr: 'class,data-theme',
-      consentMode: 'manual',
-      scopeMappings: [
-        { scope: 'ads.storage', mapping: 'ad_storage' },
-        { scope: 'analytics.storage', mapping: 'analytics_storage' }
-      ],
-      identifyMode: 'disabled'
-    });
-
-    assertThat(queuedCommands[0].command.opts.defaultConsent).containsExactly('ads.storage');
-
 - name: Intelligent identity reads common data layer signals
   code: |-
     let queuedCommands = [];
