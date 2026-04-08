@@ -1,31 +1,6 @@
 homepage: "https://getuserfeedback.com"
+documentation: "https://getuserfeedback.com/docs"
 versions:
-  - sha: Goes here
+  - sha: dedbb6169a3e6c994c8698f6355519ce74ea0f79
     changeNotes: |
-      Major Update: Scope-Based Consent Model
-
-      - Migrated from consent "levels" to granular scope-based model
-      - Perfect 1:1 mapping with GTM Consent Mode types
-      - Two modes: Automatic (recommended) and Manual (advanced control)
-
-      Automatic Mode:
-      • Reads all 7 GTM consent types automatically
-      • analytics.measurement always granted for cookieless analytics
-      • Zero configuration required
-
-      Manual Mode:
-      • Configure each of 8 widget scopes individually
-      • Options: Always Granted, Always Denied, or map to GTM consent type
-      • Full control for power users
-
-      Breaking Change: Widget API now expects { scopes: [...] } instead of { level: '...' }
-
-      Automatic Mode Mappings:
-      • functionality_storage → functionality.storage
-      • security_storage → security.storage
-      • analytics_storage → analytics.storage
-      • analytics.measurement → always granted
-      • personalization_storage → personalization.storage
-      • ad_storage → ads.storage
-      • ad_user_data → ads.user_data
-      • ad_personalization → ads.personalization
+      Initial release
