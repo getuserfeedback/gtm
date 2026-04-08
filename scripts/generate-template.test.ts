@@ -84,9 +84,12 @@ test("generated template keeps a valid empty tests manifest", () => {
 test("generated template exposes identify fields", () => {
   const parameters = parseParameters(templatePath) as Array<Record<string, unknown>>;
   const identifyGroup = parameters.find((parameter) => parameter.name === "identifyGroup");
+  const parameterNames = parameters.map((parameter) => String(parameter.name ?? ""));
 
   expect(identifyGroup).toBeDefined();
   expect(identifyGroup?.type).toBe("GROUP");
+  expect(parameterNames).not.toContain("consentMode");
+  expect(parameterNames).not.toContain("scopeMappings");
 
   const subParams = Array.isArray(identifyGroup?.subParams)
     ? (identifyGroup.subParams as Array<Record<string, unknown>>)
@@ -122,4 +125,6 @@ test("generated runtime excludes retired queue contract patterns", () => {
   expect(runtimeSection.includes("identifyPrimaryIdentityType")).toBe(true);
   expect(runtimeSection.includes("identifyPrimaryIdentityValue")).toBe(true);
   expect(runtimeSection.includes("intelligentIdentifyUserIdKeys")).toBe(true);
+  expect(runtimeSection.includes("scopeMappings")).toBe(false);
+  expect(runtimeSection.includes("consentMode")).toBe(false);
 });

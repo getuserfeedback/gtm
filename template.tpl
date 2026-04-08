@@ -527,7 +527,7 @@ const getConsentState = function() {
 	return result;
 };
 
-const buildDefaultConsent = function(templateData) {
+const deriveDefaultConsentFromGtmConsentState = function() {
 	const consentState = getConsentState();
 	const grantedScopeLookup = {};
 	const grantedScopes = [];
@@ -603,7 +603,7 @@ if (colorScheme !== undefined) {
 	initOptions.colorScheme = colorScheme;
 }
 
-const defaultConsent = buildDefaultConsent(data);
+const defaultConsent = deriveDefaultConsentFromGtmConsentState();
 if (defaultConsent !== undefined) {
 	initOptions.defaultConsent = defaultConsent;
 }
@@ -1234,7 +1234,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1260,7 +1259,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1291,7 +1289,6 @@ scenarios:
     runCode({
       apiKey: 'test-api-key',
       themeMode: 'light',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1324,7 +1321,6 @@ scenarios:
     runCode({
       apiKey: 'test-api-key',
       themeMode: 'dark',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1356,7 +1352,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'variable',
       themeModeVariable: 'system',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1392,8 +1387,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
-      analyticsMeasurementMode: 'inherit-analytics-storage',
       identifyMode: 'disabled'
     });
 
@@ -1429,7 +1422,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1465,7 +1457,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1504,7 +1495,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'intelligent'
     });
 
@@ -1545,7 +1535,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'intelligent'
     });
 
@@ -1586,7 +1575,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'intelligent'
     });
 
@@ -1620,7 +1608,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1653,7 +1640,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'advanced',
       identifyPrimaryIdentityType: 'userId',
       identifyPrimaryIdentityValue: 'user_456',
@@ -1693,7 +1679,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'advanced',
       identifyPrimaryIdentityType: 'email',
       identifyPrimaryIdentityValue: 'owner@example.com',
@@ -1728,7 +1713,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
@@ -1755,7 +1739,6 @@ scenarios:
       apiKey: 'test-api-key',
       themeMode: 'host',
       themeAttr: 'class,data-theme',
-      consentMode: 'automatic',
       identifyMode: 'disabled'
     });
 
