@@ -1,6 +1,6 @@
 homepage: "https://getuserfeedback.com"
 documentation: "https://getuserfeedback.com/docs"
 versions:
-  - sha: 63d9d822f9b291b6ae4344c1ad6dd9eb0c4e00c9
+  - sha: 7109a32bb8195a784f692d6f08dff4992c58c8ce
     changeNotes: |
       Initial release
