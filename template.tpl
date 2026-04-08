@@ -1296,8 +1296,8 @@ scenarios:
     });
 
     assertThat(queuedCommands.length).isEqualTo(1);
-    assertThat(queuedCommands[0].kind).isEqualTo('init');
-    assertThat(queuedCommands[0].opts.colorScheme).isEqualTo('light');
+    assertThat(queuedCommands[0].command.kind).isEqualTo('init');
+    assertThat(queuedCommands[0].command.opts.colorScheme).isEqualTo('light');
 
 - name: Fixed dark theme sets init colorScheme
   code: |-
@@ -1328,7 +1328,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].opts.colorScheme).isEqualTo('dark');
+    assertThat(queuedCommands[0].command.opts.colorScheme).isEqualTo('dark');
 
 - name: Variable theme mode resolves system colorScheme
   code: |-
@@ -1360,7 +1360,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].opts.colorScheme).isEqualTo('system');
+    assertThat(queuedCommands[0].command.opts.colorScheme).isEqualTo('system');
 
 - name: Automatic consent includes analytics measurement when analytics storage is granted
   code: |-
@@ -1397,7 +1397,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].opts.defaultConsent).contains('analytics.storage', 'analytics.measurement');
+    assertThat(queuedCommands[0].command.opts.defaultConsent).contains('analytics.storage', 'analytics.measurement');
 
 - name: Automatic consent can force analytics measurement granted
   code: |-
@@ -1430,11 +1430,10 @@ scenarios:
       themeMode: 'host',
       themeAttr: 'class,data-theme',
       consentMode: 'automatic',
-      analyticsMeasurementMode: 'granted',
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].opts.defaultConsent).containsExactly('analytics.measurement');
+    assertThat(queuedCommands[0].command.opts.defaultConsent).isEqualTo(undefined);
 
 - name: Automatic consent can force analytics measurement denied
   code: |-
@@ -1467,11 +1466,10 @@ scenarios:
       themeMode: 'host',
       themeAttr: 'class,data-theme',
       consentMode: 'automatic',
-      analyticsMeasurementMode: 'denied',
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].opts.defaultConsent).containsExactly('analytics.storage');
+    assertThat(queuedCommands[0].command.opts.defaultConsent).containsExactly('analytics.storage', 'analytics.measurement');
 
 - name: Manual consent uses configured mappings
   code: |-
@@ -1511,7 +1509,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].opts.defaultConsent).containsExactly('ads.storage');
+    assertThat(queuedCommands[0].command.opts.defaultConsent).containsExactly('ads.storage');
 
 - name: Intelligent identity reads common data layer signals
   code: |-
@@ -1551,10 +1549,10 @@ scenarios:
     });
 
     assertThat(queuedCommands.length).isEqualTo(2);
-    assertThat(queuedCommands[1].kind).isEqualTo('identify');
-    assertThat(queuedCommands[1].userId).isEqualTo('user_123');
-    assertThat(queuedCommands[1].traits.email).isEqualTo('user@example.com');
-    assertThat(queuedCommands[1].traits.phone).isEqualTo('+61400000000');
+    assertThat(queuedCommands[1].command.kind).isEqualTo('identify');
+    assertThat(queuedCommands[1].command.userId).isEqualTo('user_123');
+    assertThat(queuedCommands[1].command.traits.email).isEqualTo('user@example.com');
+    assertThat(queuedCommands[1].command.traits.phone).isEqualTo('+61400000000');
 
 - name: Intelligent identity can emit traits without user ID
   code: |-
@@ -1592,9 +1590,9 @@ scenarios:
     });
 
     assertThat(queuedCommands.length).isEqualTo(2);
-    assertThat(queuedCommands[1].kind).isEqualTo('identify');
-    assertThat(queuedCommands[1].userId).isEqualTo(undefined);
-    assertThat(queuedCommands[1].traits.email).isEqualTo('user@example.com');
+    assertThat(queuedCommands[1].command.kind).isEqualTo('identify');
+    assertThat(queuedCommands[1].command.userId).isEqualTo(undefined);
+    assertThat(queuedCommands[1].command.traits.email).isEqualTo('user@example.com');
 
 - name: Intelligent identity skips data layer when permission is denied
   code: |-
@@ -1634,7 +1632,7 @@ scenarios:
 
     assertThat(copyFromDataLayerCalls).isEqualTo(0);
     assertThat(queuedCommands.length).isEqualTo(1);
-    assertThat(queuedCommands[0].kind).isEqualTo('init');
+    assertThat(queuedCommands[0].command.kind).isEqualTo('init');
 
 - name: Disabled identity queues only init
   code: |-
@@ -1667,7 +1665,7 @@ scenarios:
     });
 
     assertThat(queuedCommands.length).isEqualTo(1);
-    assertThat(queuedCommands[0].kind).isEqualTo('init');
+    assertThat(queuedCommands[0].command.kind).isEqualTo('init');
 
 - name: Advanced identity can encode user ID as primary identity
   code: |-
@@ -1705,9 +1703,9 @@ scenarios:
     });
 
     assertThat(queuedCommands.length).isEqualTo(2);
-    assertThat(queuedCommands[1].kind).isEqualTo('identify');
-    assertThat(queuedCommands[1].userId).isEqualTo('user_456');
-    assertThat(queuedCommands[1].traits.plan).isEqualTo('pro');
+    assertThat(queuedCommands[1].command.kind).isEqualTo('identify');
+    assertThat(queuedCommands[1].command.userId).isEqualTo('user_456');
+    assertThat(queuedCommands[1].command.traits.plan).isEqualTo('pro');
 
 - name: Advanced identity can encode email as the primary identity
   code: |-
@@ -1745,9 +1743,9 @@ scenarios:
     });
 
     assertThat(queuedCommands.length).isEqualTo(2);
-    assertThat(queuedCommands[1].kind).isEqualTo('identify');
-    assertThat(queuedCommands[1].traits.email).isEqualTo('owner@example.com');
-    assertThat(queuedCommands[1].traits.plan).isEqualTo('pro');
+    assertThat(queuedCommands[1].command.kind).isEqualTo('identify');
+    assertThat(queuedCommands[1].command.traits.email).isEqualTo('owner@example.com');
+    assertThat(queuedCommands[1].command.traits.plan).isEqualTo('pro');
 
 - name: Inject passes a failure handler to injectScript
   code: |-
