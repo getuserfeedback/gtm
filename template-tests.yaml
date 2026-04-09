@@ -1,0 +1,531 @@
+scenarios:
+- name: Loader URL uses encoded API key
+  code: |-
+    let capturedUrl = '';
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return 'encoded-' + value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      capturedUrl = url;
+      onSuccess();
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/v1/encoded-test-api-key/loader.js');
+
+- name: Permission denial skips script injection
+  code: |-
+    let injectScriptCalls = 0;
+
+    mock('queryPermission', function() {
+      return false;
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function() {
+      injectScriptCalls = injectScriptCalls + 1;
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(injectScriptCalls).isEqualTo(0);
+
+- name: Fixed light theme sets init colorScheme
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'light',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands.length).isEqualTo(1);
+    assertThat(queuedCommands[0].command.kind).isEqualTo('init');
+    assertThat(queuedCommands[0].command.opts.colorScheme).isEqualTo('light');
+
+- name: Fixed dark theme sets init colorScheme
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'dark',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands[0].command.opts.colorScheme).isEqualTo('dark');
+
+- name: Variable theme mode resolves system colorScheme
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'variable',
+      themeModeVariable: 'system',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands[0].command.opts.colorScheme).isEqualTo('system');
+
+- name: Automatic consent emits only analytics scopes when analytics storage is granted
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    mock('isConsentGranted', function(consentType) {
+      return consentType === 'analytics_storage';
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands[0].command.opts.defaultConsent).contains('analytics.storage', 'analytics.measurement');
+
+- name: Automatic consent omits default consent when no GTM consent is granted
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    mock('isConsentGranted', function() {
+      return false;
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands[0].command.opts.defaultConsent).isEqualTo(undefined);
+
+- name: Automatic consent includes analytics measurement when analytics storage is granted
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    mock('isConsentGranted', function(consentType) {
+      return consentType === 'analytics_storage';
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands[0].command.opts.defaultConsent).containsExactly('analytics.storage', 'analytics.measurement');
+
+- name: Intelligent identity reads common data layer signals
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script' || permissionId === 'read_data_layer';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('copyFromDataLayer', function(key) {
+      if (key === 'userId') return 'user_123';
+      if (key === 'email') return 'user@example.com';
+      if (key === 'phone') return '+61400000000';
+      return undefined;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'intelligent'
+    });
+
+    assertThat(queuedCommands.length).isEqualTo(2);
+    assertThat(queuedCommands[1].command.kind).isEqualTo('identify');
+    assertThat(queuedCommands[1].command.userId).isEqualTo('user_123');
+    assertThat(queuedCommands[1].command.traits.email).isEqualTo('user@example.com');
+    assertThat(queuedCommands[1].command.traits.phone).isEqualTo('+61400000000');
+
+- name: Intelligent identity can emit traits without user ID
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script' || permissionId === 'read_data_layer';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('copyFromDataLayer', function(key) {
+      if (key === 'email') return 'user@example.com';
+      return undefined;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'intelligent'
+    });
+
+    assertThat(queuedCommands.length).isEqualTo(2);
+    assertThat(queuedCommands[1].command.kind).isEqualTo('identify');
+    assertThat(queuedCommands[1].command.userId).isEqualTo(undefined);
+    assertThat(queuedCommands[1].command.traits.email).isEqualTo('user@example.com');
+
+- name: Intelligent identity skips data layer when permission is denied
+  code: |-
+    let queuedCommands = [];
+    let copyFromDataLayerCalls = 0;
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('copyFromDataLayer', function() {
+      copyFromDataLayerCalls = copyFromDataLayerCalls + 1;
+      return 'unexpected';
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'intelligent'
+    });
+
+    assertThat(copyFromDataLayerCalls).isEqualTo(0);
+    assertThat(queuedCommands.length).isEqualTo(1);
+    assertThat(queuedCommands[0].command.kind).isEqualTo('init');
+
+- name: Disabled identity queues only init
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands.length).isEqualTo(1);
+    assertThat(queuedCommands[0].command.kind).isEqualTo('init');
+
+- name: Advanced identity can encode user ID as primary identity
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'advanced',
+      identifyPrimaryIdentityType: 'userId',
+      identifyPrimaryIdentityValue: 'user_456',
+      identifyTraits: [
+        { name: 'plan', value: 'pro' }
+      ]
+    });
+
+    assertThat(queuedCommands.length).isEqualTo(2);
+    assertThat(queuedCommands[1].command.kind).isEqualTo('identify');
+    assertThat(queuedCommands[1].command.userId).isEqualTo('user_456');
+    assertThat(queuedCommands[1].command.traits.plan).isEqualTo('pro');
+
+- name: Advanced identity can encode email as the primary identity
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'advanced',
+      identifyPrimaryIdentityType: 'email',
+      identifyPrimaryIdentityValue: 'owner@example.com',
+      identifyTraits: [
+        { name: 'plan', value: 'pro' }
+      ]
+    });
+
+    assertThat(queuedCommands.length).isEqualTo(2);
+    assertThat(queuedCommands[1].command.kind).isEqualTo('identify');
+    assertThat(queuedCommands[1].command.traits.email).isEqualTo('owner@example.com');
+    assertThat(queuedCommands[1].command.traits.plan).isEqualTo('pro');
+
+- name: Inject passes a failure handler to injectScript
+  code: |-
+    let hasFailureHandler = false;
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess, onFailure) {
+      hasFailureHandler = typeof onFailure === 'function';
+      onFailure();
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(hasFailureHandler).isEqualTo(true);
+
+- name: Inject passes a success handler to injectScript
+  code: |-
+    let hasSuccessHandler = false;
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      hasSuccessHandler = typeof onSuccess === 'function';
+      onSuccess();
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(hasSuccessHandler).isEqualTo(true);
