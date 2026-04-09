@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { buildCurrentTemplateFileSource } from "./render-template";
 
 const templatePath = path.resolve("template.tpl");
 const brandThumbnailPath = path.resolve("template-source", "brand-thumbnail.txt");
@@ -43,6 +44,13 @@ const parseParameters = (templatePath: string): unknown[] => {
 test("generated template preserves UTF-8 BOM", () => {
   const bytes = readTemplateBytes(templatePath);
   expect(Array.from(bytes.slice(0, 3))).toEqual([0xef, 0xbb, 0xbf]);
+});
+
+test("generated template matches a fresh render exactly", () => {
+  const template = readTemplate(templatePath);
+  const freshRender = buildCurrentTemplateFileSource();
+
+  expect(template).toBe(freshRender);
 });
 
 test("generated template preserves source info overrides and gallery metadata", () => {

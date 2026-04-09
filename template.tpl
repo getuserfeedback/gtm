@@ -428,30 +428,6 @@ const getSimpleTableRows = function(value) {
 	return rows;
 };
 
-const normalizeTraitValue = function(value) {
-	if (value === undefined || value === null) {
-		return undefined;
-	}
-	if (typeof value === "string") {
-		const trimmedValue = value.trim();
-		return trimmedValue ? trimmedValue : undefined;
-	}
-	return value;
-};
-
-const normalizeUserIdValue = function(value) {
-	return typeof value === "string" ? trimString(value) || undefined : undefined;
-};
-
-const addTrait = function(result, name, value) {
-	const traitName = trimString(name);
-	const traitValue = normalizeTraitValue(value);
-	if (!traitName || traitValue === undefined) {
-		return;
-	}
-	result[traitName] = traitValue;
-};
-
 const getIntelligentIdentifyValue = function(keys) {
 	for (let index = 0; index < keys.length; index += 1) {
 		const key = keys[index];
@@ -460,22 +436,17 @@ const getIntelligentIdentifyValue = function(keys) {
 		}
 
 		const value = copyFromDataLayer(key);
-		const normalizedValue = normalizeTraitValue(value);
+		if (value === undefined || value === null) {
+			continue;
+		}
+		const normalizedValue =
+			typeof value === "string" ? trimString(value) || undefined : value;
 		if (normalizedValue !== undefined) {
 			return normalizedValue;
 		}
 	}
 
 	return undefined;
-};
-
-const getIntelligentIdentifyTraits = function() {
-	return {
-		email: getIntelligentIdentifyValue(intelligentIdentifyEmailKeys),
-		firstName: getIntelligentIdentifyValue(intelligentIdentifyFirstNameKeys),
-		lastName: getIntelligentIdentifyValue(intelligentIdentifyLastNameKeys),
-		phone: getIntelligentIdentifyValue(intelligentIdentifyPhoneKeys),
-	};
 };
 
 const getAdvancedIdentifyTraits = function(templateData) {
@@ -486,20 +457,32 @@ const getAdvancedIdentifyTraits = function(templateData) {
 		if (!row || typeof row !== "object") {
 			continue;
 		}
-		addTrait(traits, row.name, row.value);
+		const traitName = trimString(row.name);
+		if (!traitName) {
+			continue;
+		}
+		const value = row.value;
+		if (value === undefined || value === null) {
+			continue;
+		}
+		const normalizedValue =
+			typeof value === "string" ? trimString(value) || undefined : value;
+		if (normalizedValue === undefined) {
+			continue;
+		}
+		traits[traitName] = normalizedValue;
 	}
 	return traits;
 };
 
 const getIdentifyCommand = function(templateData) {
 	if (templateData.identifyMode === "intelligent") {
-		const intelligentTraits = getIntelligentIdentifyTraits();
 		return buildGtmIdentifyCommand({
-			email: intelligentTraits.email,
-			firstName: intelligentTraits.firstName,
-			lastName: intelligentTraits.lastName,
+			email: getIntelligentIdentifyValue(intelligentIdentifyEmailKeys),
+			firstName: getIntelligentIdentifyValue(intelligentIdentifyFirstNameKeys),
+			lastName: getIntelligentIdentifyValue(intelligentIdentifyLastNameKeys),
 			mode: "intelligent",
-			phone: intelligentTraits.phone,
+			phone: getIntelligentIdentifyValue(intelligentIdentifyPhoneKeys),
 			userId: getIntelligentIdentifyValue(intelligentIdentifyUserIdKeys),
 		});
 	}
@@ -507,9 +490,13 @@ const getIdentifyCommand = function(templateData) {
 		return buildGtmIdentifyCommand({
 			mode: "advanced",
 			primaryIdentityType: trimString(templateData.identifyPrimaryIdentityType),
-			primaryIdentityValue: normalizeTraitValue(
-				templateData.identifyPrimaryIdentityValue,
-			),
+			primaryIdentityValue:
+				typeof templateData.identifyPrimaryIdentityValue === "string"
+					? trimString(templateData.identifyPrimaryIdentityValue) || undefined
+					: templateData.identifyPrimaryIdentityValue === undefined ||
+						  templateData.identifyPrimaryIdentityValue === null
+						? undefined
+						: templateData.identifyPrimaryIdentityValue,
 			traits: getAdvancedIdentifyTraits(templateData),
 		});
 	}

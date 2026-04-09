@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "generate:template": "bun run scripts/generate-template.ts"
+    "generate:template": "bun run scripts/generate-template.ts",
+    "verify:template": "bun run generate:template && git diff --exit-code -- template.tpl"
   },
   "dependencies": {
     "@getuserfeedback/adapters": "0.5.3"
