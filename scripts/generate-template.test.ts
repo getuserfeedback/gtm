@@ -76,6 +76,7 @@ test("generated template keeps a valid empty tests manifest", () => {
   const testsSection = extractSection(template, "___TESTS___", "___NOTES___");
   expect(testsSection.includes("scenarios:")).toBe(true);
   expect(testsSection.includes("Loader URL uses encoded API key")).toBe(true);
+  expect(testsSection.includes("Init uses production API and core endpoints")).toBe(true);
   expect(testsSection.includes("Fixed dark theme sets init colorScheme")).toBe(true);
   expect(
     testsSection.includes(
@@ -135,4 +136,46 @@ test("generated runtime excludes retired queue contract patterns", () => {
   expect(runtimeSection.includes("intelligentIdentifyUserIdKeys")).toBe(true);
   expect(runtimeSection.includes("scopeMappings")).toBe(false);
   expect(runtimeSection.includes("consentMode")).toBe(false);
+});
+
+test("generated runtime queues the production API and core endpoints", () => {
+  const template = readTemplate(templatePath).replace(/^\uFEFF/, "");
+  const runtimeSource = extractSection(
+    template,
+    "___SANDBOXED_JS_FOR_WEB_TEMPLATE___",
+    "___WEB_PERMISSIONS___",
+  );
+  const queuedCommands: Array<Record<string, unknown>> = [];
+  const queue = (queued: unknown): void => {
+    if (queued && typeof queued === "object") {
+      queuedCommands.push(queued as Record<string, unknown>);
+    }
+  };
+  const apis: Record<string, unknown> = {
+    logToConsole: () => undefined,
+    injectScript: (_url: string, onSuccess?: () => void) => onSuccess?.(),
+    queryPermission: () => true,
+    createQueue: () => queue,
+    isConsentGranted: () => false,
+    encodeUriComponent: (value: string) => value,
+    copyFromDataLayer: () => undefined,
+  };
+
+  new Function(
+    "require",
+    "data",
+    runtimeSource,
+  )((name: string) => apis[name], {
+    apiKey: "test-api-key",
+    themeMode: "light",
+    identifyMode: "disabled",
+  });
+
+  expect(queuedCommands).toHaveLength(1);
+  const command = queuedCommands[0]?.command as Record<string, unknown>;
+  const options = command.opts as Record<string, unknown>;
+  expect(options.runtimeEndpoints).toEqual({
+    apiUrl: "https://widget.getuserfeedback.com/v1",
+    coreUrl: "https://cdn.getuserfeedback.com/widget/core/v1/core.html",
+  });
 });

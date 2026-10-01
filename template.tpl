@@ -241,7 +241,7 @@ const intelligentIdentifyEmailKeys = ["email","user.email","traits.email","conte
 const intelligentIdentifyFirstNameKeys = ["firstName","first_name","user.firstName","user.first_name","user.givenName","user.given_name","traits.firstName","traits.first_name","traits.givenName","traits.given_name","context.firstName","context.first_name","context.user.firstName","context.user.first_name","context.user.givenName","context.user.given_name"];
 const intelligentIdentifyLastNameKeys = ["lastName","last_name","user.lastName","user.last_name","user.familyName","user.family_name","traits.lastName","traits.last_name","traits.familyName","traits.family_name","context.lastName","context.last_name","context.user.lastName","context.user.last_name","context.user.familyName","context.user.family_name"];
 const intelligentIdentifyPhoneKeys = ["phone","user.phone","traits.phone","context.phone","context.user.phone"];
-const generatedRuntimeEndpoints = null;
+const generatedRuntimeEndpoints = {"apiUrl":"https://widget.getuserfeedback.com/v1","coreUrl":"https://cdn.getuserfeedback.com/widget/core/v1/core.html"};
 const queueClientMeta = {"loader":"gtm","transport":"tag-manager"};
 function resolveGtmThemeInputFromTemplateData(templateData) {
 	if (templateData.themeMode === "variable") {
@@ -1225,6 +1225,38 @@ scenarios:
     });
 
     assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/v1/encoded-test-api-key/loader.js');
+
+- name: Init uses production API and core endpoints
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands[0].command.opts.runtimeEndpoints.apiUrl).isEqualTo('https://widget.getuserfeedback.com/v1');
+    assertThat(queuedCommands[0].command.opts.runtimeEndpoints.coreUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/core/v1/core.html');
 
 - name: Permission denial skips script injection
   code: |-
