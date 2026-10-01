@@ -25,6 +25,38 @@ scenarios:
 
     assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/v1/encoded-test-api-key/loader.js');
 
+- name: Init uses production API and core endpoints
+  code: |-
+    let queuedCommands = [];
+
+    mock('queryPermission', function(permissionId) {
+      return permissionId === 'inject_script';
+    });
+
+    mock('encodeUriComponent', function(value) {
+      return value;
+    });
+
+    mock('injectScript', function(url, onSuccess) {
+      onSuccess();
+    });
+
+    mock('createQueue', function() {
+      return function(command) {
+        queuedCommands.push(command);
+      };
+    });
+
+    runCode({
+      apiKey: 'test-api-key',
+      themeMode: 'host',
+      themeAttr: 'class,data-theme',
+      identifyMode: 'disabled'
+    });
+
+    assertThat(queuedCommands[0].command.opts.runtimeEndpoints.apiUrl).isEqualTo('https://widget.getuserfeedback.com/v1');
+    assertThat(queuedCommands[0].command.opts.runtimeEndpoints.coreUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/core/v1/core.html');
+
 - name: Permission denial skips script injection
   code: |-
     let injectScriptCalls = 0;

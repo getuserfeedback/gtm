@@ -1,6 +1,10 @@
 homepage: "https://getuserfeedback.com"
 documentation: "https://getuserfeedback.com/docs"
 versions:
+  - sha: b2b1464e2af57e67eac740d97cc471f06add7dd5
+    changeNotes: |
+      Fix widget initialization by supplying the production API and core endpoints.
+      Add a runtime endpoint regression test.
   - sha: e7512a54cac28cf23bf12cd9d3180824d6a2144e
     changeNotes: |
       Initial release

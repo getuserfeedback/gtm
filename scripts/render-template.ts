@@ -14,5 +14,9 @@ export const buildCurrentTemplateFileSource = (): string =>
     infoOverrides: {
       brandThumbnail: readBrandThumbnail(),
     },
+    runtimeEndpoints: {
+      apiUrl: "https://widget.getuserfeedback.com/v1",
+      coreUrl: "https://cdn.getuserfeedback.com/widget/core/v1/core.html",
+    },
     tests: readTemplateTests(),
   });
