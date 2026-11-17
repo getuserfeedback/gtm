@@ -23,9 +23,9 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/v1/encoded-test-api-key/loader.js');
+    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/current/encoded-test-api-key/loader.js');
 
-- name: Init uses production API and core endpoints
+- name: Init lets the hosted loader select its endpoints
   code: |-
     let queuedCommands = [];
 
@@ -54,8 +54,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].command.opts.runtimeEndpoints.apiUrl).isEqualTo('https://widget.getuserfeedback.com/v1');
-    assertThat(queuedCommands[0].command.opts.runtimeEndpoints.coreUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/core/v1/core.html');
+    assertThat(queuedCommands[0].command.opts.runtimeEndpoints).isEqualTo(undefined);
 
 - name: Permission denial skips script injection
   code: |-
@@ -210,7 +209,7 @@ scenarios:
 
     assertThat(queuedCommands[0].command.opts.defaultConsent).contains('analytics.storage', 'analytics.measurement');
 
-- name: Automatic consent omits default consent when no GTM consent is granted
+- name: Automatic consent preserves denial when no GTM consent is granted
   code: |-
     let queuedCommands = [];
 
@@ -243,7 +242,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].command.opts.defaultConsent).isEqualTo(undefined);
+    assertThat(queuedCommands[0].command.opts.defaultConsent).isEqualTo([]);
 
 - name: Automatic consent includes analytics measurement when analytics storage is granted
   code: |-

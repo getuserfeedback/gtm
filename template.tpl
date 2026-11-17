@@ -229,10 +229,11 @@ const injectScript = require("injectScript");
 const queryPermission = require("queryPermission");
 const createQueue = require("createQueue");
 const isConsentGranted = require("isConsentGranted");
+const addConsentListener = require("addConsentListener");
 const encodeUriComponent = require("encodeUriComponent");
 const copyFromDataLayer = require("copyFromDataLayer");
 
-const loaderScriptBaseUrl = "https://cdn.getuserfeedback.com/widget/loader/v1";
+const loaderScriptBaseUrl = "https://cdn.getuserfeedback.com/widget/loader/current";
 const gtmConsentTypes = ["functionality_storage","security_storage","analytics_storage","personalization_storage","ad_storage","ad_user_data","ad_personalization"];
 const defaultAutoDetectColorSchemeAttrs = ["class","data-theme"];
 const queueKey = "__getuserfeedback_queue";
@@ -241,7 +242,7 @@ const intelligentIdentifyEmailKeys = ["email","user.email","traits.email","conte
 const intelligentIdentifyFirstNameKeys = ["firstName","first_name","user.firstName","user.first_name","user.givenName","user.given_name","traits.firstName","traits.first_name","traits.givenName","traits.given_name","context.firstName","context.first_name","context.user.firstName","context.user.first_name","context.user.givenName","context.user.given_name"];
 const intelligentIdentifyLastNameKeys = ["lastName","last_name","user.lastName","user.last_name","user.familyName","user.family_name","traits.lastName","traits.last_name","traits.familyName","traits.family_name","context.lastName","context.last_name","context.user.lastName","context.user.last_name","context.user.familyName","context.user.family_name"];
 const intelligentIdentifyPhoneKeys = ["phone","user.phone","traits.phone","context.phone","context.user.phone"];
-const generatedRuntimeEndpoints = {"apiUrl":"https://widget.getuserfeedback.com/v1","coreUrl":"https://cdn.getuserfeedback.com/widget/core/v1/core.html"};
+const generatedRuntimeEndpoints = null;
 const queueClientMeta = {"loader":"gtm","transport":"tag-manager"};
 function resolveGtmThemeInputFromTemplateData(templateData) {
 	if (templateData.themeMode === "variable") {
@@ -543,7 +544,7 @@ const deriveDefaultConsentFromGtmConsentState = function() {
 		grantScope("ads.personalization");
 	}
 
-	return grantedScopes.length > 0 ? grantedScopes : undefined;
+	return grantedScopes;
 };
 
 let requestSequence = 0;
@@ -600,6 +601,10 @@ if (generatedRuntimeEndpoints !== null) {
 		apiUrl: generatedRuntimeEndpoints.apiUrl,
 		coreUrl: generatedRuntimeEndpoints.coreUrl,
 	};
+	if (generatedRuntimeEndpoints.realtimeUrl !== undefined) {
+		initOptions.runtimeEndpoints.realtimeUrl =
+			generatedRuntimeEndpoints.realtimeUrl;
+	}
 }
 
 enqueuePublicCommand(queuePush, instanceId, {
@@ -610,6 +615,17 @@ enqueuePublicCommand(queuePush, instanceId, {
 const identifyCommand = getIdentifyCommand(data);
 if (identifyCommand !== undefined) {
 	enqueuePublicCommand(queuePush, instanceId, identifyCommand);
+}
+
+for (let index = 0; index < gtmConsentTypes.length; index += 1) {
+	const consentType = gtmConsentTypes[index];
+	addConsentListener(consentType, function() {
+		const consent = deriveDefaultConsentFromGtmConsentState();
+		enqueuePublicCommand(queuePush, instanceId, {
+			kind: "configure",
+			opts: { consent: consent },
+		});
+	});
 }
 
 log("Loading getuserfeedback loader:", widgetUrl);
@@ -644,7 +660,7 @@ ___WEB_PERMISSIONS___
             "listItem": [
               {
                 "type": 1,
-                "string": "https://cdn.getuserfeedback.com/widget/loader/v1/*/loader.js"
+                "string": "https://cdn.getuserfeedback.com/widget/loader/current/*/loader.js"
               }
             ]
           }
@@ -1224,9 +1240,9 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/v1/encoded-test-api-key/loader.js');
+    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/current/encoded-test-api-key/loader.js');
 
-- name: Init uses production API and core endpoints
+- name: Init lets the hosted loader select its endpoints
   code: |-
     let queuedCommands = [];
 
@@ -1255,8 +1271,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].command.opts.runtimeEndpoints.apiUrl).isEqualTo('https://widget.getuserfeedback.com/v1');
-    assertThat(queuedCommands[0].command.opts.runtimeEndpoints.coreUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/core/v1/core.html');
+    assertThat(queuedCommands[0].command.opts.runtimeEndpoints).isEqualTo(undefined);
 
 - name: Permission denial skips script injection
   code: |-
@@ -1411,7 +1426,7 @@ scenarios:
 
     assertThat(queuedCommands[0].command.opts.defaultConsent).contains('analytics.storage', 'analytics.measurement');
 
-- name: Automatic consent omits default consent when no GTM consent is granted
+- name: Automatic consent preserves denial when no GTM consent is granted
   code: |-
     let queuedCommands = [];
 
@@ -1444,7 +1459,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(queuedCommands[0].command.opts.defaultConsent).isEqualTo(undefined);
+    assertThat(queuedCommands[0].command.opts.defaultConsent).isEqualTo([]);
 
 - name: Automatic consent includes analytics measurement when analytics storage is granted
   code: |-
