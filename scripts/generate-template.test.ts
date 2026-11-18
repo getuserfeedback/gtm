@@ -178,7 +178,7 @@ test("gallery tag loads the hosted release and delegates endpoint selection with
   expect(queuedCommands).toHaveLength(1);
   const command = queuedCommands[0]?.command as Record<string, unknown>;
   const options = command.opts as Record<string, unknown>;
-  expect(injectedUrl).toBe("https://cdn.getuserfeedback.com/widget/loader/current/test-api-key/loader.js");
+  expect(injectedUrl).toBe("https://cdn.getuserfeedback.com/widget/loader/v5/test-api-key/loader.js");
   expect(options.runtimeEndpoints).toBeUndefined();
   expect(options.defaultConsent).toEqual([]);
   expect(options.colorScheme).toBe("light");

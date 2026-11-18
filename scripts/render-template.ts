@@ -11,6 +11,7 @@ const readTemplateTests = (): string => readFileSync(templateTestsPath, "utf8").
 
 export const buildCurrentTemplateFileSource = (): string =>
   buildGtmTemplateFileSource({
+    loaderScriptBaseUrl: "https://cdn.getuserfeedback.com/widget/loader/v5",
     infoOverrides: {
       description: "In-app user onboarding, surveys, and embedded forms for feedback-fueled product growth",
       brandThumbnail: readBrandThumbnail(),

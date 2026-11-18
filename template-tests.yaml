@@ -23,7 +23,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/current/encoded-test-api-key/loader.js');
+    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/v5/encoded-test-api-key/loader.js');
 
 - name: Init lets the hosted loader select its endpoints
   code: |-

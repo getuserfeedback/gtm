@@ -233,7 +233,7 @@ const addConsentListener = require("addConsentListener");
 const encodeUriComponent = require("encodeUriComponent");
 const copyFromDataLayer = require("copyFromDataLayer");
 
-const loaderScriptBaseUrl = "https://cdn.getuserfeedback.com/widget/loader/current";
+const loaderScriptBaseUrl = "https://cdn.getuserfeedback.com/widget/loader/v5";
 const gtmConsentTypes = ["functionality_storage","security_storage","analytics_storage","personalization_storage","ad_storage","ad_user_data","ad_personalization"];
 const defaultAutoDetectColorSchemeAttrs = ["class","data-theme"];
 const queueKey = "__getuserfeedback_queue";
@@ -660,7 +660,7 @@ ___WEB_PERMISSIONS___
             "listItem": [
               {
                 "type": 1,
-                "string": "https://cdn.getuserfeedback.com/widget/loader/current/*/loader.js"
+                "string": "https://cdn.getuserfeedback.com/widget/loader/v5/*/loader.js"
               }
             ]
           }
@@ -1240,7 +1240,7 @@ scenarios:
       identifyMode: 'disabled'
     });
 
-    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/current/encoded-test-api-key/loader.js');
+    assertThat(capturedUrl).isEqualTo('https://cdn.getuserfeedback.com/widget/loader/v5/encoded-test-api-key/loader.js');
 
 - name: Init lets the hosted loader select its endpoints
   code: |-
