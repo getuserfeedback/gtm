@@ -7,6 +7,6 @@
     "verify:template": "bun run generate:template && git diff --exit-code -- template.tpl"
   },
   "dependencies": {
-    "@getuserfeedback/adapters": "0.5.3"
+    "@getuserfeedback/adapters": "0.6.5"
   }
 }
