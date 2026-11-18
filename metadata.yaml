@@ -1,6 +1,9 @@
 homepage: "https://getuserfeedback.com"
 documentation: "https://getuserfeedback.com/docs"
 versions:
+  - sha: d2e7c506e967d04d6d3ec02d100983ab63dec47e
+    changeNotes: |
+      Load widget v5
   - sha: b2b1464e2af57e67eac740d97cc471f06add7dd5
     changeNotes: |
       Fix widget initialization by supplying the production API and core endpoints.
